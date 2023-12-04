@@ -1,8 +1,6 @@
 package genericTree;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class GenericTree {
 
@@ -41,8 +39,96 @@ public class GenericTree {
         return size;
     }
 
+    public static int height(Node n){
+        int ht = -1;
+        // wrt edge calculation
+        // for node put ht = 0
+        for(Node child : n.children){
+            int ch = height(child);
+            ht = Math.max(ch,ht);
+        }
+        return ht+1;
+    }
+
+    public static void preOrder(Node n){
+        System.out.print(n.data + " ");
+        for(Node child :n.children){
+            preOrder(child);
+        }
+    }
+
+    public static void postOrder(Node n){
+        for(Node child :n.children){
+            postOrder(child);
+        }
+        System.out.print(n.data + " ");
+    }
+
+    public static  void levelOrder(Node n){
+        // remove print add
+        Queue<Node> queue = new ArrayDeque<>();
+        queue.add(n);
+        while(queue.size() > 0){
+            Node removed = queue.remove();
+            System.out.print(removed.data + " ");
+            for(Node child : removed.children){
+                queue.add(child);
+            }
+        }
+    }
+
+    public static void levelOrderLineWise(Node n){
+        Queue<Node> mq = new ArrayDeque<>();
+        mq.add(n);
+        Queue<Node> cq = new ArrayDeque<>();
+
+        while (mq.size() > 0){
+            Node removed = mq.remove();
+            System.out.print(removed.data + " ");
+            for(Node child : removed.children){
+                cq.add(child);
+            }
+            if(mq.size() == 0){
+                mq = cq;
+                cq = new ArrayDeque<>();
+                System.out.println();
+            }
+        }
+    }
+
+    public static void levelOrderLineWiseZigZag(Node n){
+        Stack<Node> ms = new Stack<>();
+        ms.push(n);
+        Stack<Node> cs = new Stack<>();
+
+        int level =1;
+        while (ms.size() > 0){
+            Node popped = ms.pop();
+            System.out.print(popped.data + " ");
+            if(level % 2 != 0){
+                // left ->
+                for(int i=0;i<popped.children.size();i++){
+                    cs.push(popped.children.get(i));
+                }
+            }else{
+                // right <-
+                for(int i=popped.children.size()-1;i>=0;i--){
+                    cs.push(popped.children.get(i));
+                }
+            }
+            if(ms.size() == 0){
+                ms = cs;
+                cs = new Stack<>();
+                level++;
+                System.out.println();
+            }
+        }
+    }
+
+
     public static void main(String[] args) {
-        int[] eulerPath = {10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
+//        int[] eulerPath = {10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
+        int[] eulerPath = {10,20,-1,30,40,-1,50,60,-1,-1,-1,-1};
         Node root = null;
         Stack<Node> stack = new Stack<>();
 
@@ -62,6 +148,16 @@ public class GenericTree {
 
         display(root);
         System.out.println("Size of tree -> "+size(root));
+        System.out.println("Height of tree -> "+height(root));
+        preOrder(root);
+        System.out.println();
+        postOrder(root);
+        System.out.println();
+        levelOrder(root);
+        System.out.println();
+        levelOrderLineWise(root);
+        System.out.println();
+        levelOrderLineWiseZigZag(root);
     }
 
 }
