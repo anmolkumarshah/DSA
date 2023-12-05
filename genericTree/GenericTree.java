@@ -125,6 +125,53 @@ public class GenericTree {
         }
     }
 
+    public static void mirror(Node node){
+        for(Node child:node.children){
+            mirror(child);
+        }
+        Collections.reverse(node.children);
+    }
+
+    public static void removeLeafNode(Node n){
+        for(int i=n.children.size()-1;i>=0;i--){
+            Node node = n.children.get(i);
+            if(node.children.size() == 0){
+                n.children.remove(node);
+            }
+        }
+        for(Node child : n.children){
+            removeLeafNode(child);
+        }
+    }
+
+    static int ceil = Integer.MAX_VALUE;
+    static int floor = Integer.MIN_VALUE;
+    public static void ceilAndFloor(Node n,int data){
+        if(n.data>data){
+            if(n.data<ceil){
+                ceil = n.data;
+            }
+        }
+        if(n.data<data){
+            if(n.data > floor){
+                floor = n.data;
+            }
+        }
+        for(Node child : n.children){
+            ceilAndFloor(child,data);
+        }
+    }
+
+    public static int KthLargestElement(Node n,int k){
+        int factor = Integer.MAX_VALUE;
+        for(int i=0;i<k;i++){
+            ceilAndFloor(n,factor);
+            factor = floor;
+            floor = Integer.MIN_VALUE;
+        }
+        return factor;
+    }
+
 
     public static void main(String[] args) {
 //        int[] eulerPath = {10,20,50,-1,60,-1,-1,30,70,-1,80,110,-1,120,-1,-1,90,-1,-1,40,100,-1,-1,-1};
@@ -155,9 +202,17 @@ public class GenericTree {
         System.out.println();
         levelOrder(root);
         System.out.println();
-        levelOrderLineWise(root);
+//        levelOrderLineWise(root);
         System.out.println();
-        levelOrderLineWiseZigZag(root);
+//        levelOrderLineWiseZigZag(root);
+//        mirror(root);
+//        removeLeafNode(root);
+        levelOrder(root);
+        ceilAndFloor(root,35);
+        System.out.println();
+        System.out.println(ceil);
+        System.out.println(floor);
+        System.out.println(KthLargestElement(root,1));
     }
 
 }
