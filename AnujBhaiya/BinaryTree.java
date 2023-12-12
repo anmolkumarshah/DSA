@@ -200,21 +200,58 @@ public class BinaryTree {
 
     }
 
-    static Node prev,head;
-    public static Node flateningDLL(Node root){
-        if(root == null) return null;
+    static Node prev, head;
+
+    public static Node flateningDLL(Node root) {
+        if (root == null) return null;
         flateningDLL(root.left);
-        if(prev == null){
+        if (prev == null) {
             //  this occurs only for the left most node
             // we can put it as head
             head = root;
             prev = root;
-        }else{
+        } else {
             prev.right = root;
             root.left = prev;
             prev = root;
         }
         return flateningDLL(root.right);
+    }
+
+    public static int diameter1(Node n) {
+
+        if (n == null) {
+            return 0;
+        }
+
+        int ld = diameter1(n.left);
+        int rd = diameter1(n.right);
+        int f = height(n.left) + height(n.right) + 1;
+        return Math.max(f, Math.max(ld, rd));
+    }
+
+    static class DiaPair {
+        int height;
+        int diameter;
+    }
+
+    public static DiaPair diameter2(Node n) {
+
+        if (n == null) {
+            DiaPair m = new DiaPair();
+            m.height = 0;
+            m.diameter =0;
+            return m;
+        }
+
+        DiaPair ld = diameter2(n.left);
+        DiaPair rd = diameter2(n.right);
+
+        DiaPair m = new DiaPair();
+        m.height = Math.max(ld.height, rd.height) + 1;
+        int f = ld.height + rd.height + 1;
+        m.diameter = Math.max(ld.diameter, Math.max(rd.diameter, f));
+        return m;
     }
 
     public static void main(String[] args) {
@@ -231,13 +268,17 @@ public class BinaryTree {
         System.out.println();
         bottomView(root);
 
-        flateningDLL(root);
+//        flateningDLL(root);
+
+//        System.out.println();
+//        while (head != null){
+//            System.out.print(head.data+" ");
+//            head = head.right;
+//        }
 
         System.out.println();
-        while (head != null){
-            System.out.print(head.data+" ");
-            head = head.right;
-        }
+        System.out.println(diameter1(root));
+        System.out.println(diameter2(root).diameter);
     }
 
 }
